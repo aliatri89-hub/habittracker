@@ -2,13 +2,16 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase } from './supabase'
 
 const HABITS = [
-  { id: 1, name: '45 min outdoor',  sub: 'Get outside — run, walk, anything' },
-  { id: 2, name: '45 min strength', sub: 'Lift something heavy' },
-  { id: 3, name: 'Read',            sub: '10 pages minimum' },
-  { id: 4, name: 'Meditate',        sub: '5 minutes' },
-  { id: 5, name: 'IF 16:8',         sub: 'Eating window closed' },
-  { id: 6, name: 'No Phone AM',     sub: '60 min after waking' },
-  { id: 7, name: 'No Phone PM',     sub: '60 min before bed' },
+  { id: 1,  name: '45 min outdoor',  sub: 'Get outside — run, walk, anything' },
+  { id: 2,  name: 'Phone Break',     sub: 'No phone during outdoor workout' },
+  { id: 3,  name: '45 min strength', sub: 'Lift something heavy' },
+  { id: 4,  name: 'Read',            sub: '10 pages minimum' },
+  { id: 5,  name: 'Meditate',        sub: '5 minutes' },
+  { id: 6,  name: 'IF 16:8',         sub: 'Eating window closed' },
+  { id: 7,  name: 'No Phone PM',     sub: '60 min before bed' },
+  { id: 8,  name: 'Wake Checks',     sub: 'Am I dreaming?' },
+  { id: 9,  name: 'Dream Journal',   sub: 'Write up on waking' },
+  { id: 10, name: 'MILD',            sub: 'Intention while falling asleep' },
 ]
 
 const TOTAL = HABITS.length
@@ -66,14 +69,14 @@ const CSS = `
   .auth-wordmark span { color: #D4A843; }
   .auth-tagline {
     font-size: 11px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     margin-bottom: 48px;
   }
   .auth-label {
     font-size: 10px;
-    color: #444;
+    color: #888;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin-bottom: 8px;
@@ -136,7 +139,7 @@ const CSS = `
   .wordmark span { color: #D4A843; }
   .hdr-date {
     font-size: 10px;
-    color: #333;
+    color: #666;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin-top: 3px;
@@ -151,7 +154,7 @@ const CSS = `
   }
   .streak-lbl {
     font-size: 9px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.15em;
     text-transform: uppercase;
   }
@@ -167,7 +170,7 @@ const CSS = `
   /* TODAY */
   .today-date {
     font-size: 10px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     margin-bottom: 16px;
@@ -212,13 +215,13 @@ const CSS = `
   }
   .habit-sub {
     font-size: 10px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.07em;
     margin-top: 1px;
     transition: color 0.15s;
   }
-  .habit-row.done .habit-name { color: #2a2a2a; }
-  .habit-row.done .habit-sub  { color: #222; }
+  .habit-row.done .habit-name { color: #333; }
+  .habit-row.done .habit-sub  { color: #2e2e2e; }
 
   .prog-row {
     display: flex;
@@ -241,7 +244,7 @@ const CSS = `
   }
   .prog-lbl {
     font-size: 10px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.08em;
     white-space: nowrap;
   }
@@ -262,7 +265,7 @@ const CSS = `
   }
   .complete-sub {
     font-size: 10px;
-    color: #7a6020;
+    color: #9a7828;
     letter-spacing: 0.08em;
     margin-top: 2px;
   }
@@ -283,7 +286,7 @@ const CSS = `
   .cal-nav-btn {
     background: none;
     border: none;
-    color: #444;
+    color: #777;
     font-size: 18px;
     cursor: pointer;
     padding: 4px 10px;
@@ -299,7 +302,7 @@ const CSS = `
   .cal-day-label {
     text-align: center;
     font-size: 9px;
-    color: #333;
+    color: #666;
     letter-spacing: 0.1em;
     padding-bottom: 8px;
   }
@@ -313,8 +316,8 @@ const CSS = `
     color: #2a2a2a;
     font-family: 'IBM Plex Mono', monospace;
   }
-  .cal-day.past { color: #444; }
-  .cal-day.partial { background: #1a1710; color: #5a4c18; }
+  .cal-day.past { color: #666; }
+  .cal-day.partial { background: #1a1710; color: #7a6820; }
   .cal-day.full { background: #D4A843; color: #0c0b09; font-weight: 500; }
   .cal-day.today-ring { box-shadow: 0 0 0 1.5px #D4A843; }
   .cal-day.today-ring:not(.full) { color: #D4A843; }
@@ -339,7 +342,7 @@ const CSS = `
   }
   .cal-stat-lbl {
     font-size: 9px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-top: 2px;
@@ -348,7 +351,7 @@ const CSS = `
   /* WEIGHT */
   .wt-section-lbl {
     font-size: 10px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -375,7 +378,7 @@ const CSS = `
   .wt-input:focus { border-color: #D4A843; }
   .wt-unit {
     font-size: 14px;
-    color: #444;
+    color: #777;
     letter-spacing: 0.1em;
   }
   .wt-log-btn {
@@ -407,7 +410,7 @@ const CSS = `
     border-bottom: 1px solid rgba(255,255,255,0.05);
   }
   .wt-entry:last-child { border-bottom: none; }
-  .wt-entry-date { font-size: 11px; color: #444; letter-spacing: 0.07em; }
+  .wt-entry-date { font-size: 11px; color: #777; letter-spacing: 0.07em; }
   .wt-entry-val {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
@@ -416,14 +419,14 @@ const CSS = `
     align-items: baseline;
     gap: 4px;
   }
-  .wt-entry-unit { font-size: 11px; color: #444; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
+  .wt-entry-unit { font-size: 11px; color: #777; font-family: 'IBM Plex Mono', monospace; font-weight: 400; }
   .wt-entry.today-wt .wt-entry-val { color: #D4A843; }
-  .wt-entry.today-wt .wt-entry-date { color: #7a6020; }
+  .wt-entry.today-wt .wt-entry-date { color: #9a7828; }
   .wt-delta { font-size: 11px; margin-left: 6px; }
   .wt-delta.down { color: #6a9a5a; }
   .wt-delta.up   { color: #c04030; }
 
-  .empty { padding: 40px 0; text-align: center; color: #2a2a2a; font-size: 12px; letter-spacing: 0.1em; }
+  .empty { padding: 40px 0; text-align: center; color: #555; font-size: 12px; letter-spacing: 0.1em; }
 
   /* NAV */
   .nav {
@@ -443,7 +446,7 @@ const CSS = `
     flex: 1;
     background: none;
     border: none;
-    color: #333;
+    color: #555;
     padding: 10px 0 12px;
     cursor: pointer;
     display: flex;
@@ -462,9 +465,9 @@ const CSS = `
   .sign-out-btn {
     margin-top: 32px;
     background: none;
-    border: 1px solid #1a1a1a;
+    border: 1px solid #2a2a2a;
     border-radius: 8px;
-    color: #333;
+    color: #555;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -474,7 +477,7 @@ const CSS = `
     text-transform: uppercase;
     transition: color 0.15s, border-color 0.15s;
   }
-  .sign-out-btn:hover { color: #555; border-color: #333; }
+  .sign-out-btn:hover { color: #888; border-color: #444; }
 `
 
 // ─── SPARKLINE ────────────────────────────────────────────────────────────────
